@@ -12,10 +12,10 @@
 
 ### Những kiểu dữ liệu trong Golang
 - Golang có 3 kiểu dữ liệu cơ bản:
- - boolean: true, false
- - number: int, float, byte, complex, ...
- - chuổi: string
-- Kiểu dữ liệu dẫn xuất (derived types): pointer, array, struct, function, slice, interface, map, channel, union
+  - boolean: true, false
+  - number: int, float, byte, complex, ...
+  - chuổi: string
+- Và các kiểu dữ liệu dẫn xuất (derived types): pointer, array, struct, function, slice, interface, map, channel, union
 
 ### Method khác gì với Function
 - Golang không phải ngôn ngữ hướng đối tượng, nhưng ta có thể sử dụng struct để thay cho class. Golang hỗ trợ method -> nó là một hàm được khai báo cho một dữ liệu đặc biệt gọi là receiver. Cú pháp `func (t Type) methodName(parameter list)`
