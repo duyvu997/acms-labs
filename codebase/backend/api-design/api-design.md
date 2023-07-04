@@ -1,0 +1,12 @@
+1. What’s your personal opinion on CRUD endpoints?
+- CRUD endpoints is popular, and it’s a fundamental way to manage data that many systems follow.
+- CRUD should follow RESTful principles, but not strictky, it depend on other priorities factors
+    - Create: should use POST, data should in plural form, noun. like POST **`/users` `/categories`**
+    - Read: should use GET, and can add query parameter
+        - search criteria: **`/products?category=electronics&price=100`**
+        - offset or page number **`/offset=1`**
+        - limit: **`/limit=1000`** and should have a maximum constant: 100, 200, 1000,.. to prevent get all records in db with limit = big integer.
+    - Update: should use PUT or PATCH
+        - PUT: use to completely replace or overwrite the target resource with the new representation provided in the request.
+        - PATCH: use to partially update or modify the target resource with the changes specified in the request.
+    - Delete: should use DELETE
