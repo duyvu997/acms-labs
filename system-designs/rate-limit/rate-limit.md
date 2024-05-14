@@ -1,6 +1,6 @@
 ### Overview 
 
-#### Why should we use rate limters?
+#### Why should we use rate limiters?
 Rate limiting is used to control the rate of incoming requests or data flow in a system. It plays a crucial role in maintaining the stability, performance, and security of applications and services. 
 - Protect Against Overload
 - Ensure Fair Resource Allocation
