@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qũy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        button:disabled:hover {
+            background-color: #cccccc;
+        }
+        #number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #007bff;
+        }
+        #log, #createdNumbers {
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .total-sum {
+            font-size: 18px;
+            font-weight: bold;
+            color: #dc3545;
+            text-align: right;
+        }
+        #numberGrid {
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .grid-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 2px;
+            padding: 10px;
+        }
+        .grid-cell {
+            padding: 8px 4px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 12px;
+            border-radius: 4px;
+            background-color: white;
+            position: relative;
+            min-height: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .grid-cell.level-1 {
+            background-color: #28a745; /* Green - Best */
+            color: white;
+            font-weight: bold;
+        }
+        .grid-cell.level-2 {
+            background-color: #87cf3a; /* Light Green - Good */
+            color: white;
+            font-weight: bold;
+        }
+        .grid-cell.level-3 {
+            background-color: #ffc107; /* Yellow - Medium */
+            color: white;
+            font-weight: bold;
+        }
+        .grid-cell.level-4 {
+            background-color: #fd7e14; /* Orange - Bad */
+            color: white;
+            font-weight: bold;
+        }
+        .grid-cell.level-5 {
+            background-color: #dc3545; /* Red - Worst */
+            color: white;
+            font-weight: bold;
+        }
+        #logEntriesBody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+        #logEntriesBody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+        .user-select {
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .user-ratio {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .ratio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .ratio-option input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        .ratio-option label {
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .xe-cam {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+        .xe-hong {
+            color: #e83e8c;
+            font-weight: bold;
+        }
+        .number-badge {
+            position: absolute;
+            top: 2px;
+            width: 12px;
+            height: 12px;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 50%;
+            color: white;
+        }
+        .number-badge.anh {
+            background-color: #e83e8c; /* Pink for Ông/Ô */
+            right: 2px;
+        }
+        .number-badge.em {
+            background-color: #007bff; /* Blue for Bà/B */
+            left: 2px;
+        }
+        .toggle-button {
+            margin: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .toggle-button:hover {
+            background-color: #5a6268;
+        }
+        .toggle-button.active {
+            background-color: #28a745;
+        }
+        .number-badge.hidden {
+            display: none;
+        }
+        .grid-cell.anh-color {
+            background-color: rgba(232, 62, 140, 0.2); /* Light pink for Anh/Ô */
+        }
+        .grid-cell.em-color {
+            background-color: rgba(0, 123, 255, 0.2); /* Light blue for Em/B */
+        }
+        .grid-cell.both-color {
+            background: linear-gradient(
+                45deg, 
+                rgba(232, 62, 140, 0.2) 0%, 
+                rgba(232, 62, 140, 0.2) 50%, 
+                rgba(0, 123, 255, 0.2) 50%, 
+                rgba(0, 123, 255, 0.2) 100%
+            );
+        }
+        /* Responsive table styles */
+        @media screen and (max-width: 768px) {
+            body {
+                margin: 20px;
+            }
+
+            #createdNumber {
+                margin: 10px 5px;
+            }
+
+            #log {
+                padding: 8px;
+            }
+
+            #log table {
+                font-size: 14px;
+            }
+
+            #log tr {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5px;
+                margin-bottom: 10px;
+                padding: 8px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+
+            #log td {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 4px;
+                border: none;
+                text-align: left;
+            }
+
+            #log td:before {
+                content: attr(data-label);
+                font-size: 12px;
+                color: #666;
+                margin-bottom: 2px;
+            }
+
+            /* Specific cell styling */
+            #log td[data-label="Ngày"] {
+                color: #007bff;
+                font-weight: bold;
+            }
+
+            #log td[data-label="Số tiền"] {
+                color: #28a745;
+                font-weight: bold;
+            }
+
+            #log td[data-label="Người chơi"] {
+                font-weight: bold;
+            }
+
+            /* Total sum styling */
+            .total-sum {
+                display: grid;
+                gap: 8px;
+                text-align: left;
+                padding: 10px;
+                margin-top: 15px;
+                border-top: 2px solid #ddd;
+                font-size: 16px;
+            }
+
+            /* Hide table headers on mobile */
+            #log thead {
+                display: none;
+            }
+
+            /* Adjust the created numbers table */
+            #createdNumbers {
+                margin: 20px 5px;
+            }
+        }
+        #monthlyChart {
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .month-bar {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .month-bar-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .month-bar-label .month-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #495057;
+        }
+        .month-bar-label .month-total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .month-bar-progress {
+            height: 24px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .month-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, #007bff, #28a745);
+            transition: width 0.3s ease;
+        }
+        .month-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #dee2e6;
+        }
+        .month-detail-item {
+            text-align: center;
+        }
+        .month-detail-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #007bff;
+            display: block;
+        }
+        .month-detail-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        .money-amount {
+            font-size: 16px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .turn-number {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .day-number {
+            color: #6c757d;
+        }
+        .date-cell {
+            font-weight: bold;
+            color: #495057;
+        }
+        .user-cell {
+            font-weight: bold;
+        }
+        .user-ong {
+            color: #e83e8c;
+        }
+        .user-ba {
+            color: #007bff;
+        }
+
+        /* Adjust mobile styles */
+        @media screen and (max-width: 768px) {
+            #log td[data-label="Số tiền"] {
+                color: inherit;
+            }
+            #log td[data-label="Số tiền"] .money-amount {
+                display: block;
+                margin-top: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Tiền dưỡng già năm 2025</h1>
+    <div class="user-ratio">
+        <div class="ratio-option">
+            <input type="radio" id="anh" name="userSelect" value="Ông" checked>
+            <label for="anh" class="xe-cam">Ông</label>
+        </div>
+        <div class="ratio-option">
+            <input type="radio" id="em" name="userSelect" value="Bà">
+            <label for="em" class="xe-hong">Bà</label>
+        </div>
+    </div>
+    <button id="generateButton" onclick="generateRandomNumbers()">Tạo số</button>
+    <div id="createdNumbers">
+        <h3>Số tiền bạn nhét heo hôm nay</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ngày</th>
+                    <th>Số tiền</th>
+                </tr>
+            </thead>
+            <tbody id="createdNumbersBody"></tbody>
+        </table>
+    </div>
+
+
+    <div id="numberGrid">
+        <button id="toggleBadges" class="toggle-button active">Ẩn người góp công</button>
+        <div class="grid-table" id="numberGridContainer"></div>
+    </div>
+
+    <div id="monthlyChart">
+        <h3>Thống kê theo tháng</h3>
+        <div id="monthlyChartContent"></div>
+    </div>
+
+    <div id="log">
+        <h3>Nhật ký</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ngày</th>
+                    <th>Số tiền</th>
+                    <th>Ngày (Từ đầu năm)</th>
+                    <th>Số lượt</th>
+                    <th>Người chơi</th>
+                </tr>
+            </thead>
+            <tbody id="logEntriesBody"></tbody>
+        </table>
+        <p class="total-sum" id="totalSum">Tổng số: 0 (0 đ)</p>
+    </div>
+
+    
+
+
+    <script>
+        let startDate = new Date("2025-01-01");
+        let firstEntryDate = new Date("2025-02-12");
+        
+        function generateRandomDate(start, end) {
+            return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+        }
+        
+        let preGeneratedNumbers = [
+            { date: "2025-02-12", dayCount: 43, number: 86, turnCount: 1, user: "Bà" },
+            { date: "2025-02-12", dayCount: 43, number: 360, turnCount: 2, user: "Ông" },
+            { date: "2025-02-13", dayCount: 44, number: 348, turnCount: 3, user: "Bà" },
+            { date: "2025-02-13", dayCount: 44, number: 13, turnCount: 4, user: "Ông" },
+            { date: "2025-02-14", dayCount: 45, number: 85, turnCount: 5, user: "Bà" },
+            { date: "2025-02-14", dayCount: 45, number: 226, turnCount: 6, user: "Ông" },
+            { date: "2025-02-15", dayCount: 46, number: 87, turnCount: 7, user: "Bà" },
+            { date: "2025-02-15", dayCount: 46, number: 320, turnCount: 8, user: "Ông" },
+            { date: "2025-02-16", dayCount: 47, number: 102, turnCount: 9, user: "Bà" },
+            { date: "2025-02-16", dayCount: 47, number: 107, turnCount: 10, user: "Ông" },
+            { date: "2025-02-17", dayCount: 48, number: 327, turnCount: 11, user: "Bà" },
+            { date: "2025-02-17", dayCount: 48, number: 125, turnCount: 12, user: "Ông" },
+            { date: "2025-02-18", dayCount: 49, number: 1, turnCount: 13, user: "Bà" },
+            { date: "2025-02-18", dayCount: 49, number: 188, turnCount: 14, user: "Ông" },
+            { date: "2025-02-19", dayCount: 50, number: 21, turnCount: 15, user: "Bà" },
+            { date: "2025-02-19", dayCount: 50, number: 104, turnCount: 16, user: "Ông" },
+            { date: "2025-02-20", dayCount: 51, number: 47, turnCount: 17, user: "Bà" },
+            { date: "2025-02-20", dayCount: 51, number: 45, turnCount: 18, user: "Ông" },
+            { date: "2025-02-21", dayCount: 52, number: 186, turnCount: 19, user: "Bà" },
+            { date: "2025-02-21", dayCount: 52, number: 284, turnCount: 20, user: "Ông" },
+            { date: "2025-02-22", dayCount: 53, number: 95, turnCount: 21, user: "Bà" },
+            { date: "2025-02-22", dayCount: 53, number: 62, turnCount: 22, user: "Ông" },
+            { date: "2025-02-23", dayCount: 54, number: 40, turnCount: 23, user: "Bà" },
+            { date: "2025-02-23", dayCount: 54, number: 343, turnCount: 24, user: "Ông" },
+            { date: "2025-02-24", dayCount: 55, number: 67, turnCount: 25, user: "Bà" },
+            { date: "2025-02-24", dayCount: 55, number: 209, turnCount: 26, user: "Ông" },
+            { date: "2025-02-25", dayCount: 56, number: 116, turnCount: 27, user: "Bà" },
+            { date: "2025-02-25", dayCount: 56, number: 30, turnCount: 28, user: "Ông" },
+            { date: "2025-02-26", dayCount: 57, number: 43, turnCount: 29, user: "Bà" },
+            { date: "2025-02-26", dayCount: 57, number: 196, turnCount: 30, user: "Ông" },
+            { date: "2025-02-27", dayCount: 58, number: 158, turnCount: 31, user: "Bà" },
+            { date: "2025-02-27", dayCount: 58, number: 117, turnCount: 32, user: "Ông" },
+            { date: "2025-02-28", dayCount: 59, number: 141, turnCount: 33, user: "Bà" },
+            { date: "2025-02-28", dayCount: 59, number: 212, turnCount: 34, user: "Ông" },
+            { date: "2025-03-01", dayCount: 60, number: 198, turnCount: 35, user: "Bà" },
+            { date: "2025-03-01", dayCount: 60, number: 148, turnCount: 36, user: "Ông" },
+            { date: "2025-03-02", dayCount: 61, number: 237, turnCount: 37, user: "Bà" },
+            { date: "2025-03-02", dayCount: 61, number: 252, turnCount: 38, user: "Ông" },
+            { date: "2025-03-03", dayCount: 62, number: 21, turnCount: 39, user: "Bà" },
+            { date: "2025-03-03", dayCount: 62, number: 170, turnCount: 40, user: "Ông" },
+            { date: "2025-03-04", dayCount: 63, number: 51, turnCount: 41, user: "Bà" },
+            { date: "2025-03-04", dayCount: 63, number: 288, turnCount: 42, user: "Ông" },
+            { date: "2025-03-05", dayCount: 64, number: 161, turnCount: 43, user: "Bà" },
+            { date: "2025-03-05", dayCount: 64, number: 65, turnCount: 44, user: "Ông" },
+            { date: "2025-03-06", dayCount: 65, number: 191, turnCount: 45, user: "Bà" },
+            { date: "2025-03-06", dayCount: 65, number: 142 , turnCount: 46, user: "Ông" },
+            { date: "2025-03-07", dayCount: 66, number: 33 , turnCount: 47, user: "Bà" },
+            { date: "2025-03-07", dayCount: 66, number: 207 , turnCount: 48, user: "Ông" }
+            
+        ];
+        
+        let logEntries = [];
+        let createdNumbers = [];
+        let totalSum = 0;
+        let createdNumbersCount = 0;
+        let globalTurnCount = 0;
+        
+        // Add function to load data from localStorage
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('piggyBankData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                logEntries = data.logEntries;
+                createdNumbers = data.createdNumbers;
+                totalSum = data.totalSum;
+                createdNumbersCount = data.createdNumbersCount;
+                globalTurnCount = data.globalTurnCount;
+            } else {
+                // Initialize with pre-generated data if no saved data exists
+                logEntries = [...preGeneratedNumbers];
+                createdNumbers = [];
+                totalSum = logEntries.reduce((sum, entry) => sum + entry.number, 0);
+                createdNumbersCount = logEntries.length;
+                globalTurnCount = createdNumbersCount;
+                saveToLocalStorage();
+            }
+        }
+
+        // Add function to save data to localStorage
+        function saveToLocalStorage() {
+            const dataToSave = {
+                logEntries,
+                createdNumbers,
+                totalSum,
+                createdNumbersCount,
+                globalTurnCount
+            };
+            localStorage.setItem('piggyBankData', JSON.stringify(dataToSave));
+        }
+
+        function checkButtonAvailability() {
+            let today = new Date().toISOString().split('T')[0];
+            let turnsToday = logEntries.filter(entry => entry.date === today).length;
+            let dayCount = Math.floor((new Date(today) - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            let maxTurns = createdNumbersCount < dayCount ? 2 : 1;
+            
+            let button = document.getElementById("generateButton");
+            if (turnsToday >= maxTurns) {
+                button.disabled = true;
+                button.title = "Đã hết lượt tạo số hôm nay";
+            } else {
+                button.disabled = false;
+                button.title = "";
+            }
+        }
+
+        function generateRandomNumbers() {
+            let selectedUser = document.querySelector('input[name="userSelect"]:checked').value;
+            let today = new Date().toISOString().split('T')[0];
+            let todayDate = new Date(today);
+            let dayCount = Math.floor((todayDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            let turnsToday = logEntries.filter(entry => entry.date === today).length;
+            
+            let maxTurns = createdNumbersCount < dayCount ? 2 : 1;
+            if (turnsToday >= maxTurns) {
+                checkButtonAvailability();
+                return;
+            }
+            
+            let newNumber = Math.floor(Math.random() * 365) + 1;
+            totalSum += newNumber;
+            createdNumbersCount++;
+            globalTurnCount++;
+            
+            let newEntry = { 
+                date: today, 
+                number: newNumber, 
+                dayCount, 
+                turnCount: globalTurnCount,
+                user: selectedUser
+            };
+            
+            logEntries.unshift(newEntry);
+            createdNumbers.unshift(newEntry);
+            
+            updateLog();
+            updateCreatedNumbers();
+            updateNumberGrid();
+            updateMonthlyChart();
+            checkButtonAvailability();
+            saveToLocalStorage();
+        }
+        
+        function updateLog() {
+            logEntries.sort((a, b) => b.turnCount - a.turnCount);
+            let logEntriesBody = document.getElementById("logEntriesBody");
+            logEntriesBody.innerHTML = "";
+            
+            let anhSum = 0;
+            let emSum = 0;
+            
+            logEntries.forEach(entry => {
+                let row = document.createElement("tr");
+                row.innerHTML = `
+                    <td data-label="Ngày" class="date-cell">${entry.date}</td>
+                    <td data-label="Số tiền">
+                        <span class="money-amount">${formatNumber(entry.number)}.000 đ</span>
+                    </td>
+                    <td data-label="Ngày (Từ đầu năm)">
+                        <span class="day-number">Ngày ${entry.dayCount}</span>
+                    </td>
+                    <td data-label="Số lượt">
+                        <span class="turn-number">${entry.turnCount}</span>
+                    </td>
+                    <td data-label="Người góp" class="user-cell ${entry.user === "Ông" ? 'user-ong' : 'user-ba'}">
+                        ${entry.user}
+                    </td>
+                `;
+                logEntriesBody.appendChild(row);
+                
+                if (entry.user === "Ông") {
+                    anhSum += entry.number;
+                } else {
+                    emSum += entry.number;
+                }
+            });
+            
+            document.getElementById("totalSum").innerHTML = `
+                <div><strong class="user-ong">Ông (Ô):</strong> <span class="money-amount">${formatNumber(anhSum)}.000 đ</span></div>
+                <div><strong class="user-ba">Bà (B):</strong> <span class="money-amount">${formatNumber(emSum)}.000 đ</span></div>
+                <div style="margin-top: 8px; font-size: 18px;">
+                    <strong>Tổng số:</strong> 
+                    <span class="money-amount" style="font-size: 18px;">${formatNumber(totalSum)}.000 đ</span>
+                </div>
+            `;
+        }
+        
+        function updateCreatedNumbers() {
+            let createdNumbersBody = document.getElementById("createdNumbersBody");
+            createdNumbersBody.innerHTML = "";
+            
+            createdNumbers.forEach(entry => {
+                let row = document.createElement("tr");
+                row.innerHTML = `
+                    <td data-label="Ngày" class="date-cell">${entry.date}</td>
+                    <td data-label="Số tiền">
+                        <span class="money-amount">${formatNumber(entry.number)}.000 đ</span>
+                    </td>
+                `;
+                createdNumbersBody.appendChild(row);
+            });
+        }
+        
+        function getNumberLevel(number) {
+            if (number <= 73) return 1;
+            if (number <= 146) return 2;
+            if (number <= 219) return 3;
+            if (number <= 292) return 4;
+            return 5;
+        }
+
+        let showBadges = true;
+
+        function toggleBadges() {
+            showBadges = !showBadges;
+            const button = document.getElementById('toggleBadges');
+            
+            if (showBadges) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+            
+            updateNumberGrid(); // Update the entire grid to switch color schemes
+        }
+
+        function updateNumberGrid() {
+            const anhCounts = new Map();
+            const emCounts = new Map();
+            
+            logEntries.forEach(entry => {
+                if (entry.user === "Ông") {
+                    const count = anhCounts.get(entry.number) || 0;
+                    anhCounts.set(entry.number, count + 1);
+                } else {
+                    const count = emCounts.get(entry.number) || 0;
+                    emCounts.set(entry.number, count + 1);
+                }
+            });
+            
+            const cells = document.querySelectorAll('.grid-cell');
+            cells.forEach(cell => {
+                const number = parseInt(cell.textContent);
+                // Remove all existing classes
+                cell.classList.remove(
+                    'level-1', 'level-2', 'level-3', 'level-4', 'level-5',
+                    'anh-color', 'em-color', 'both-color'
+                );
+                
+                // Remove existing badges
+                const existingBadges = cell.querySelectorAll('.number-badge');
+                existingBadges.forEach(badge => cell.removeChild(badge));
+                
+                const hasAnh = anhCounts.has(number);
+                const hasEm = emCounts.has(number);
+                
+                if (hasAnh || hasEm) {
+                    // Add background color based on users if badges are shown
+                    if (showBadges) {
+                        if (hasAnh && hasEm) {
+                            cell.classList.add('both-color');
+                        } else if (hasAnh) {
+                            cell.classList.add('anh-color');
+                        } else {
+                            cell.classList.add('em-color');
+                        }
+                    } else {
+                        // Use regular level colors when badges are hidden
+                        const level = getNumberLevel(number);
+                        cell.classList.add(`level-${level}`);
+                    }
+                    
+                    // Add Anh badge (right side, pink, "Ô")
+                    if (hasAnh) {
+                        const anhBadge = document.createElement('div');
+                        anhBadge.className = 'number-badge anh' + (showBadges ? '' : ' hidden');
+                        anhBadge.textContent = 'Ô';
+                        cell.appendChild(anhBadge);
+                    }
+                    
+                    // Add Em badge (left side, blue, "B")
+                    if (hasEm) {
+                        const emBadge = document.createElement('div');
+                        emBadge.className = 'number-badge em' + (showBadges ? '' : ' hidden');
+                        emBadge.textContent = 'B';
+                        cell.appendChild(emBadge);
+                    }
+                }
+            });
+        }
+
+        function createNumberGrid() {
+            let container = document.getElementById("numberGridContainer");
+            container.innerHTML = "";
+            container.className = "grid-table"; // Add grid-table class directly to container
+            
+            for (let i = 1; i <= 365; i++) {
+                let cell = document.createElement("div");
+                cell.className = "grid-cell";
+                cell.textContent = i;
+                container.appendChild(cell);
+            }
+            
+            updateNumberGrid();
+        }
+        
+        function formatNumber(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function updateMonthlyChart() {
+            const monthlyData = new Map();
+            const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 
+                              'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+            
+            // Initialize monthly data
+            logEntries.forEach(entry => {
+                const date = new Date(entry.date);
+                const monthKey = date.getMonth();
+                
+                if (!monthlyData.has(monthKey)) {
+                    monthlyData.set(monthKey, {
+                        total: 0,
+                        ong: 0,
+                        ba: 0,
+                        count: 0
+                    });
+                }
+                
+                const monthData = monthlyData.get(monthKey);
+                monthData.total += entry.number;
+                monthData.count += 1;
+                if (entry.user === "Ông") {
+                    monthData.ong += entry.number;
+                } else {
+                    monthData.ba += entry.number;
+                }
+            });
+
+            // Find max value for scaling
+            const maxTotal = Math.max(...Array.from(monthlyData.values()).map(d => d.total));
+            
+            // Generate chart HTML
+            const chartContent = document.getElementById('monthlyChartContent');
+            chartContent.innerHTML = '';
+            
+            monthlyData.forEach((data, month) => {
+                const percentage = (data.total / maxTotal) * 100;
+                const monthDiv = document.createElement('div');
+                monthDiv.className = 'month-bar';
+                monthDiv.innerHTML = `
+                    <div class="month-bar-label">
+                        <span class="month-name">${monthNames[month]}</span>
+                        <span class="month-total">${formatNumber(data.total)}.000 đ</span>
+                    </div>
+                    <div class="month-bar-progress">
+                        <div class="month-bar-fill" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="month-details">
+                        <div class="month-detail-item">
+                            <span class="month-detail-value">${formatNumber(data.ong)}.000 đ</span>
+                            <span class="month-detail-label">Ông</span>
+                        </div>
+                        <div class="month-detail-item">
+                            <span class="month-detail-value">${data.count}</span>
+                            <span class="month-detail-label">Lượt</span>
+                        </div>
+                        <div class="month-detail-item">
+                            <span class="month-detail-value">${formatNumber(data.ba)}.000 đ</span>
+                            <span class="month-detail-label">Bà</span>
+                        </div>
+                    </div>
+                `;
+                chartContent.appendChild(monthDiv);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadFromLocalStorage();
+            checkButtonAvailability();
+            logEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            updateLog();
+            updateCreatedNumbers();
+            createNumberGrid();
+            updateMonthlyChart();
+            
+            document.getElementById('toggleBadges').addEventListener('click', toggleBadges);
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/tien-duong-gia/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

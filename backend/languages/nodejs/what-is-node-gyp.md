@@ -1,5 +1,5 @@
 # What is node-gyp
-node-gyp is a tool used for compiling native C/C++ addons for Nodejs. It's crucial when you are using or building Node.js modules that contain native code, like interacting with low-level system libraries or achieving higher performance tasks. 
+`node-gyp` is a tool used for compiling native C/C++ addons for Nodejs. It's crucial when you are using or building Node.js modules that contain native code, like interacting with low-level system libraries or achieving higher performance tasks. 
 
 # Key feature
 - compiling native addons
